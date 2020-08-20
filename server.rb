@@ -26,6 +26,8 @@ loop do
   request_line = socket.gets
   STDERR.puts request_line
 
+  next if request_line.nil?
+
   # parse method and path from request line
   request_parts = request_line.split(' ')
   method = request_parts[0]

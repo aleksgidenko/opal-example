@@ -14,20 +14,21 @@
       $iasip_top = []
       $cat_facts = []
 
-      def add_to_container(text)
+      def add_to_list(text)
         DOM {
-          div.info {
-            span.red text
-          }
-        }.append_to($document['container'])
+          li text
+        }.append_to($document['list'])
       end
 
       def add_cat_fact
         fact = $cat_facts.shift
         if fact != nil
-          # add a cat fact to page every second till array empty
-          add_to_container(fact['text'])
+          add_to_list(fact['text'])
           puts fact['text']
+
+          # add a cat fact to page every second till array empty
+          set_timeout = $$[:setTimeout]
+          set_timeout.call(->{ add_cat_fact }, 1000)
         end
       end
 
@@ -43,7 +44,7 @@
         Browser::HTTP.get '/api/cat/facts' do
           on :success do |res|
             $cat_facts = res.json()['all']
-            $window.every(1, &add_cat_fact)
+            add_cat_fact
           end
         end
       end
@@ -51,6 +52,6 @@
 
   </head>
   <body>
-    <div id="container"></div>
+    <ul id="list"></ul>
   </body>
 </html>
